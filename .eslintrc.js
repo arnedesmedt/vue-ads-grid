@@ -2,7 +2,7 @@ module.exports = {
     root: true,
 
     env: {
-        node: true
+        node: true,
     },
 
     extends: [
@@ -13,6 +13,6 @@ module.exports = {
     ],
 
     parserOptions: {
-        parser: 'babel-eslint'
-    }
+        parser: 'babel-eslint',
+    },
 };

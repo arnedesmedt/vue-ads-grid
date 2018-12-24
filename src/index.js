@@ -1,5 +1,9 @@
-import '../assets/css/tailwind.css';
+import './assets/css/tailwind.css';
 
-import TableTree from './components/TableTree';
+import Grid from './components/Grid';
+import GridItem from './components/GridItem';
 
-export default TableTree;
+export default {
+    Grid,
+    GridItem,
+};
