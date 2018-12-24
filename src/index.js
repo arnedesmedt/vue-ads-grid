@@ -1,9 +1,9 @@
 import './assets/css/tailwind.css';
 
-import Grid from './components/Grid';
-import GridItem from './components/GridItem';
+import VueAdsGrid from './components/Grid';
+import VueAdsGridItem from './components/GridItem';
 
 export default {
-    Grid,
-    GridItem,
+    VueAdsGrid,
+    VueAdsGridItem,
 };
