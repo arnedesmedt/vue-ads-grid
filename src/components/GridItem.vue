@@ -1,6 +1,6 @@
 <template>
     <div
-        :style="itemStyle"
+        :style="columnStyle"
     >
         <div ref="content">
             <slot/>
@@ -27,7 +27,7 @@ export default {
             maxRow: null,
             height: null,
             rowGap: null,
-            itemStyle: {},
+            rowStyle: {},
         };
     },
 
@@ -87,13 +87,19 @@ export default {
 
             return this.positions[1] + this.maxRow;
         },
+
+        columnStyle () {
+            return Object.assign(this.rowStyle, {
+                'grid-column-start': this.columnStart,
+                'grid-column-end': this.columnEnd,
+                padding: '0 !important',
+            });
+        },
     },
 
     methods: {
         updateItemStyle () {
-            this.itemStyle = {
-                'grid-column-start': this.columnStart,
-                'grid-column-end': this.columnEnd,
+            this.rowStyle = {
                 'grid-row-start': this.rowStart(),
                 'grid-row-end': this.rowEnd(),
             };
@@ -113,6 +119,7 @@ export default {
             }
 
             let totalHeight = this.$refs.content.getBoundingClientRect().height + this.rowGap;
+
             let heightRow =parseInt(this.height) + this.rowGap;
 
             return 'span ' + Math.ceil(totalHeight / heightRow);
