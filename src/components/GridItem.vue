@@ -17,7 +17,7 @@ export default {
 
         dimensions: {
             type: Object,
-            required: false,
+            required: true,
         },
     },
 };

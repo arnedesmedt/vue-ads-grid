@@ -122,7 +122,7 @@ export default class Positioner {
 
         if (responsive.all === null) {
             Object.keys(responsive).some(key => {
-                if (key === 'all' || responsive[key] === null) {
+                if (responsive[key] === null) {
                     return false;
                 }
 
@@ -131,6 +131,15 @@ export default class Positioner {
                 return true;
             });
         }
+
+        let last = null;
+        Object.keys(responsive).forEach(key => {
+            if (responsive[key] === null) {
+                responsive[key] = last;
+            }
+
+            last = responsive[key];
+        });
 
         return responsive;
     }

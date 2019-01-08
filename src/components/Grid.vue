@@ -1,5 +1,4 @@
 <script>
-// todo add responsiveness by the tailwind responsive labels
 import Positioner from '../services/Positioner';
 import TailwindConfig from '../../tailwind.config';
 
@@ -47,23 +46,24 @@ export default {
                 'column',
             ],
             slots: null,
-            positions: {
-                all: [],
-                sm: [],
-                md: [],
-                lg: [],
-                xl: [],
-            },
-            responsive: false,
             windowSize: 'all',
-            filledRows: [
-                [],
-            ],
+            windowSizes: null,
         };
     },
 
     created () {
         this.loadDimensions();
+
+        if (this.isResponsive()) {
+            this.windowSizes = TailwindConfig.screens;
+            Object.keys(this.windowSizes)
+                .forEach(key => {
+                    this.windowSizes[key] = parseInt(this.windowSizes[key]);
+                });
+
+            window.addEventListener('resize', this.resizeWindow);
+            this.resizeWindow();
+        }
     },
 
     render (createElement) {
@@ -87,17 +87,18 @@ export default {
             );
         }
 
-        this.$slots.default.forEach(slot => {
-            let position = this.positioner.convert(slot.componentOptions.propsData.position)[this.windowSize];
-
-            if (!slot.data.style) {
+        this.slots.forEach(slot => {
+            if (! slot.componentInstance && !slot.data.style) {
                 slot.data.style = {};
             }
 
-            slot.data.style['grid-column-start'] = position.start.column;
-            slot.data.style['grid-column-end'] = position.end.column;
-            slot.data.style['grid-row-start'] = position.start.row;
-            slot.data.style['grid-row-end'] = position.end.row;
+            let position = slot.componentOptions.propsData.dimensions[this.windowSize];
+            let style = slot.componentInstance ? slot.componentInstance.$vnode.elm.style : slot.data.style;
+
+            style['grid-column-start'] = position.start.column;
+            style['grid-column-end'] = position.end.column;
+            style['grid-row-start'] = position.start.row;
+            style['grid-row-end'] = position.end.row;
         });
 
         return createElement(
@@ -177,17 +178,23 @@ export default {
                 if (group.length === 1) {
                     let slot = slots[group[0].index];
 
-                    if (!slot.data.style) {
-                        slot.data.style = {};
+                    if (! slot.componentInstance) {
+                        if (!slot.data.style) {
+                            slot.data.style = {};
+                        }
+
+                        if (!slot.data.class) {
+                            slot.data.class = {}
+                        }
                     }
 
-                    if (!slot.data.class) {
-                        slot.data.class = {};
-                    }
+                    let style = slot.componentInstance ? slot.componentInstance.$vnode.elm.style : slot.data.style;
+                    let classList = slot.componentInstance ? slot.componentInstance.$vnode.elm.classList : slot.data.class;
 
-                    slot.data.style['flex-grow'] = groupSize;
-                    slot.data.class['vue-ads-mb-' + this.rowGap] = counter.value % 2 === 0 && index < groups.length - 1;
-                    slot.data.class['vue-ads-mr-' + this.columnGap] = counter.value % 2 === 1 && index < groups.length - 1;
+
+                    style['flex-grow'] = groupSize;
+                    classList['vue-ads-mb-' + this.rowGap] = counter.value % 2 === 0 && index < groups.length - 1;
+                    classList['vue-ads-mr-' + this.columnGap] = counter.value % 2 === 1 && index < groups.length - 1;
 
                     return slot;
                 }
@@ -264,68 +271,16 @@ export default {
             }, Number.MAX_SAFE_INTEGER);
         },
 
-        // setupEventListener () {
-        //     window.addEventListener('resize', this.updateGridItemChildren);
-        // },
-        //
-        // updateGridItemChildren () {
-        //     this.filledRows = [
-        //         [],
-        //     ];
-        //     let maxColumn = CharIntConverter.integerToCharacters(this.columns);
-        //
-        //     this.children().forEach(child => {
-        //         child.maxColumn = maxColumn;
-        //         child.maxRow = this.rows;
-        //         child.height = this.height;
-        //         child.rowGap = parseInt(this.rowGap);
-        //         child.updateItemStyle();
-        //     });
-        // },
-        //
-        // firstEmptyRow (columnStart, columnEnd, rowEnd) {
-        //     let found = false;
-        //     let initialRow = 0;
-        //     rowEnd = parseInt(rowEnd.substr(5));
-        //
-        //     while(!found) {
-        //         let lastRow = initialRow + rowEnd;
-        //         for (let row = initialRow; row < lastRow; row++) {
-        //             if (!this.filledRows[row]) {
-        //                 this.filledRows[row] = [];
-        //             }
-        //
-        //             for (let column = columnStart - 1; column < columnEnd - 1; column++) {
-        //                 if (this.filledRows[row][column]) {
-        //                     found = false;
-        //                     break;
-        //                 }
-        //
-        //                 found = true;
-        //             }
-        //
-        //             if (!found) {
-        //                 initialRow = row + 1;
-        //                 lastRow = initialRow + rowEnd;
-        //             }
-        //         }
-        //
-        //
-        //         for (let row = initialRow; row < lastRow; row++) {
-        //             for (let column = columnStart - 1; column < columnEnd - 1; column++) {
-        //                 this.filledRows[row][column] = true;
-        //             }
-        //         }
-        //     }
-        //
-        //     return initialRow + 1;
-        // },
+        resizeWindow () {
+            this.windowSize = Object.keys(this.windowSizes)
+                .reduce((size, key) => {
+                    if (parseInt(window.innerWidth) >= this.windowSizes[key]) {
+                        return key;
+                    }
+
+                    return size;
+                }, 'all');
+        },
     },
-
-
-    // mounted () {
-    // this.updateGridItemChildren();
-    // this.setupEventListener();
-    // },
 };
 </script>
