@@ -124,11 +124,15 @@ export default {
         },
 
         loadDimensions () {
-            this.slots = this.$slots.default.map(slot => {
-                slot.componentOptions.propsData.dimensions = this.positioner.convert(slot.componentOptions.propsData.position);
+            this.slots = this.$slots.default
+                .filter(slot => {
+                    return slot.tag.indexOf('VueAdsGridItem') > -1;
+                })
+                .map(slot => {
+                    slot.componentOptions.propsData.dimensions = this.positioner.convert(slot.componentOptions.propsData.position);
 
-                return slot;
-            });
+                    return slot;
+                });
         },
 
         buildDivTree (createElement, slots, counter) {
