@@ -184,7 +184,7 @@ export default {
                         }
 
                         if (!slot.data.class) {
-                            slot.data.class = {}
+                            slot.data.class = {};
                         }
                     }
 
