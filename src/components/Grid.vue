@@ -1,9 +1,7 @@
 <script>
 // todo add responsiveness by the tailwind responsive labels
-// todo reintroduce the css grid type
-// todo add gaps for the  the flex grid type
-// todo make the props reactive
 import Positioner from '../services/Positioner';
+import TailwindConfig from '../../tailwind.config';
 
 export default {
     name: 'VueAdsGrid',
@@ -69,7 +67,6 @@ export default {
     },
 
     render (createElement) {
-        console.log('render');
         if (this.type === 'flex') {
             let counter = {
                 value: 0,
@@ -90,17 +87,30 @@ export default {
             );
         }
 
+        this.$slots.default.forEach(slot => {
+            let position = this.positioner.convert(slot.componentOptions.propsData.position)[this.windowSize];
+
+            if (!slot.data.style) {
+                slot.data.style = {};
+            }
+
+            slot.data.style['grid-column-start'] = position.start.column;
+            slot.data.style['grid-column-end'] = position.end.column;
+            slot.data.style['grid-row-start'] = position.start.row;
+            slot.data.style['grid-row-end'] = position.end.row;
+        });
+
         return createElement(
             'div',
             {
-                class: {
-                    'vue-ads-grid': true,
+                style: {
+                    display: 'grid',
+                    'grid-column-gap': TailwindConfig.margin[this.columnGap],
+                    'grid-row-gap': TailwindConfig.margin[this.rowGap],
+
                 },
             },
-            // this.$slots.default.forEach(slot => {
-            //
-            // });
-            [],
+            this.$slots.default
         );
     },
 
@@ -312,23 +322,6 @@ export default {
         // },
     },
 
-    watch: {
-        // columns: {
-        //     handler: 'updateGridItemChildren',
-        // },
-        //
-        // rows: {
-        //     handler: 'updateGridItemChildren',
-        // },
-        //
-        // height: {
-        //     handler: 'updateGridItemChildren',
-        // },
-        //
-        // rowGap: {
-        //     handler: 'updateGridItemChildren',
-        // },
-    },
 
     // mounted () {
     // this.updateGridItemChildren();

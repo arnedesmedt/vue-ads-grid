@@ -1,11 +1,17 @@
 <template>
     <div class="vue-ads-bg-grey-lighter vue-ads-p-4">
-        <vue-ads-grid :rows="7" :columns="5" :row-gap="1" :column-gap="1">
+        <vue-ads-grid :rows="7" :columns="5" type="grid" :row-gap="2" :column-gap="2">
             <vue-ads-grid-item position="a1/d1" :class="{'vue-ads-p-2': true, 'vue-ads-bg-white': true, 'vue-ads-shadow': true}">
                 test: a1/d1
             </vue-ads-grid-item>
             <vue-ads-grid-item position="e1/e2" :class="{'vue-ads-p-2': true, 'vue-ads-bg-white': true, 'vue-ads-shadow': true}">
-                test: e1/e2
+                test: e1/e2<br/>
+                test: e1/e2<br/>
+                test: e1/e2<br/>
+                test: e1/e2<br/>
+                test: e1/e2<br/>
+                test: e1/e2<br/>
+                test: e1/e2<br/>
             </vue-ads-grid-item>
             <vue-ads-grid-item position="a2/a3" :class="{'vue-ads-p-2': true, 'vue-ads-bg-white': true, 'vue-ads-shadow': true}">
                 test: a2/a3
