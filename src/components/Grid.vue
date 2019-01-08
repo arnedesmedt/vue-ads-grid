@@ -46,12 +46,12 @@ export default {
                 'column',
             ],
             slots: null,
-            windowSize: 'all',
+            windowSize: null,
             windowSizes: null,
         };
     },
 
-    mounted () {
+    created () {
         this.loadDimensions();
 
         if (this.isResponsive()) {
