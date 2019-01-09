@@ -1,13 +1,15 @@
 let letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 export default class Positioner {
-    constructor (rows, columns) {
+    constructor (rows, columns, rowGap, columnGap) {
         this.rows = rows;
         this.columns = columns;
+        this.rowGap = rowGap;
+        this.columnGap = columnGap;
     }
 
     set rows (rows) {
-        this._rows = rows;
+        this._rows = this.responsive(rows);
     }
 
     get rows () {
@@ -15,21 +17,47 @@ export default class Positioner {
     }
 
     set columns (columns) {
-        this._columns = columns;
+        this._columns = this.responsive(columns);
     }
 
     get columns () {
         return this._columns;
     }
 
-    convert (position) {
-        let responsivePositions = this.responsive(position);
+    set rowGap (rowGap) {
+        this._rowGap = this.responsive(rowGap);
+    }
 
-        Object.keys(responsivePositions).forEach(responsive => {
-            if (responsivePositions[responsive] !== null) {
+    get rowGap () {
+        return this._rowGap;
+    }
+
+    set columnGap (columnGap) {
+        this._columnGap = this.responsive(columnGap);
+    }
+
+    get columnGap () {
+        return this._columnGap;
+    }
+
+    set windowSize (windowSize) {
+        this._windowSize = windowSize;
+    }
+
+    get windowSize () {
+        return this._windowSize;
+    }
+
+    convert (position) {
+        let responsivePositions = this.responsive(position, false);
+
+        Object.keys(responsivePositions)
+            .filter(responsive => responsivePositions[responsive])
+            .forEach(responsive => {
                 responsivePositions[responsive] = this.convertArea(responsivePositions[responsive]);
-            }
-        });
+            });
+
+        this.fillResponsive(responsivePositions);
 
         return responsivePositions;
     }
@@ -87,20 +115,20 @@ export default class Positioner {
             }
 
             if (Number.isInteger(Number(other))) {
-                return this.integerToCharacters(this.columns) + other;
+                return this.integerToCharacters(this.columns[this.windowSize]) + other;
             }
 
-            return other + this.rows;
+            return other + this.rows[this.windowSize];
         }
 
         if (Number.isInteger(Number(position))) {
-            return (isStart ? 'a' : this.integerToCharacters(this.columns)) + position;
+            return (isStart ? 'a' : this.integerToCharacters(this.columns[this.windowSize])) + position;
         }
 
-        return position + (isStart ? '1' : this.rows);
+        return position + (isStart ? '1' : this.rows[this.windowSize]);
     }
 
-    responsive (position) {
+    responsive (group, fill = true) {
         let responsive = {
             all: null,
             sm: null,
@@ -109,14 +137,14 @@ export default class Positioner {
             xl: null,
         };
 
-        position.split(' ')
-            .forEach(responsivePosition => {
-                let positionItems = responsivePosition.split(':');
+        group.split(' ')
+            .forEach(responsiveItem => {
+                let parts = responsiveItem.split(':');
 
-                if(Object.keys(responsive).includes(positionItems[0])) {
-                    responsive[positionItems[0]] = positionItems[1];
+                if(Object.keys(responsive).includes(parts[0])) {
+                    responsive[parts[0]] = parts[1];
                 } else {
-                    responsive.all = responsivePosition;
+                    responsive.all = responsiveItem;
                 }
             });
 
@@ -132,6 +160,14 @@ export default class Positioner {
             });
         }
 
+        if (fill) {
+            this.fillResponsive(responsive);
+        }
+
+        return responsive;
+    }
+
+    fillResponsive (responsive) {
         let last = null;
         Object.keys(responsive).forEach(key => {
             if (responsive[key] === null) {
@@ -140,8 +176,6 @@ export default class Positioner {
 
             last = responsive[key];
         });
-
-        return responsive;
     }
 
     charactersToInteger (characters) {
