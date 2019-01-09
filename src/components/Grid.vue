@@ -108,6 +108,8 @@ export default {
                     display: 'grid',
                     'grid-column-gap': TailwindConfig.margin[this.columnGap],
                     'grid-row-gap': TailwindConfig.margin[this.rowGap],
+                    'grid-template-columns': `repeat(${this.columns}, 1fr)`,
+                    'grid-template-rows': `repeat(${this.rows}, 1fr)`,
 
                 },
             },

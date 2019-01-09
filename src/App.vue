@@ -1,6 +1,6 @@
 <template>
     <div class="vue-ads-bg-grey-lighter vue-ads-p-4">
-        <vue-ads-grid :rows="7" :columns="5" type="flex" :row-gap="2" :column-gap="2">
+        <vue-ads-grid :rows="7" :columns="5" type="grid" :row-gap="2" :column-gap="2">
             <vue-ads-grid-item position="a1/d1" :class="{'vue-ads-p-2': true, 'vue-ads-bg-white': true, 'vue-ads-shadow': true}">
                 test: a1/d1
             </vue-ads-grid-item>
